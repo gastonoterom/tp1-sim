@@ -1,12 +1,12 @@
-### Flask and sv imports
+# Flask and sv imports
 from jinja2 import Template
-from flask import Flask, request, Response
+from flask import Flask, request, Response, stream_with_context, jsonify
 import json
-### Math imports
+# Math imports
 from random import random
 from math import trunc
 #import numpy
-### Custom imports
+# Custom imports
 from classes import JiCuadradoClass
 
 app = Flask(__name__)
@@ -106,7 +106,4 @@ def jiCuadrado():
     # Se crea el objeto JiCuadrado, y automaticamente llama a la funcion que cuenta la frecuencia por intervalos
     jicuadrado_obj = JiCuadradoClass(intervalos, random_array)
 
-    for x in jicuadrado_obj.estadistico_prueba_ac:
-        print(x)
-
-    return Response(json.dumps("hola"), mimetype='application/json')
+    return Response(json.dumps(jicuadrado_obj.estadistico_prueba), mimetype='application/json')

@@ -1,5 +1,5 @@
 import numpy as np
-
+from time import sleep
 
 class JiCuadradoClass:
     # Override __init__
@@ -41,7 +41,9 @@ class JiCuadradoClass:
             self._frecuencia_obtenida[intervalo_a_sumar] += 1
 
         # Se calcula el estadistico de prueba para cada intervalo
-        self._estadistico_prueba = [(fe-fo)**2/fe for fe, fo in zip(self._frecuencia_esperada, self._frecuencia_obtenida)]
+        fe = self._frecuencia_esperada
+        fo = self._frecuencia_obtenida
+        self._estadistico_prueba = [(fe[i]-fo[i])**2/fe[i] for i in range(self._intervalos)]
 
     # Getters
 
@@ -62,7 +64,7 @@ class JiCuadradoClass:
         ac = 0
         for value in self._estadistico_prueba:
             ac += value
-            yield ac
+            yield str(ac) + "\n"
 
     @property
     def intervalos(self):
