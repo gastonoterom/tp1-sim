@@ -1,0 +1,71 @@
+import numpy as np
+
+class JiCuadradoClass:
+    # Override __init__
+    def __init__(self, intervalos, random_array):
+        # Variables por parametro, cantidad de intervalos y lista de numeros randoms
+        self._intervalos = intervalos
+        self._random_array = random_array
+
+        # Constantes
+        self._intervalo_size = 0
+
+        # Listas a crear, frecuencia obtenida, frecuencia esperada y estadistico de prueba
+        self._frecuencia_obtenida = []
+        self._frecuencia_esperada = []
+        self._estadistico_prueba = []
+        self._estadistico_prueba_ac = []
+
+        # Se llama a la funcion update intervalos
+        self._update_valores()
+
+    # Actualiza los valores de la frecuencia obtenida, la frecuencia esperada 
+    # y el estadistico de prueba, deberia llamarse cada vez que cambia la cantidad
+    # de intervalos
+    def _update_valores(self):
+        
+        # El tamaño de cada intervalo cambia
+        self._intervalo_size = 1/self._intervalos
+
+        # En este ji cuadrado se espera que la frecuencia esperada sea igual para cada intervalo
+        fe = len(self._random_array) / self._intervalos
+        self._frecuencia_esperada = [ fe for x in range(self._intervalos)]
+
+        # Para cada valor de la lista aleatoria, se suma en el intervalo que le corresponde como frecuencias obtenida
+        self._frecuencia_obtenida = [ 0 for x in range(self._intervalos)]
+
+        for random_num in self._random_array:
+            # SE MULTIPLICA POR DIEZ LOS VALORES A DIVIDIR PORQUE PYTHON TIENE PROBLEMAS DE DECIMALES
+            intervalo_a_sumar = int( (random_num * 10) // (self._intervalo_size*10) )
+            self._frecuencia_obtenida[intervalo_a_sumar] += 1
+
+        # Se calcula el estadistico de prueba para cada intervalo
+        self._estadistico_prueba = [ (fe-fo)**2/fe for fe, fo in zip(self._frecuencia_esperada, self._frecuencia_obtenida)]
+        
+        # Se acumula el estadistico de prueba para cada intervalo
+        self._estadistico_prueba_ac = np.cumsum(self._estadistico_prueba).tolist()
+
+
+    # Getters
+    @property
+    def frecuencia_obtenida(self):
+        return self._frecuencia_obtenida
+    @property
+    def frecuencia_esperada(self):
+        return self._frecuencia_esperada
+    @property
+    def estadistico_prueba(self):
+        return self._estadistico_prueba  
+    @property
+    def estadistico_prueba_ac(self):
+        return self._estadistico_prueba_ac
+
+    @property
+    def intervalos(self):
+        return self._intervalos
+
+    # Setters
+    @intervalos.setter
+    def intervalos(self, new_value):
+        self._intervalos = new_value
+        self._update_valores()
