@@ -106,4 +106,7 @@ def jiCuadrado():
     # Se crea el objeto JiCuadrado, y automaticamente llama a la funcion que cuenta la frecuencia por intervalos
     jicuadrado_obj = JiCuadradoClass(intervalos, random_array)
 
-    return Response(json.dumps(jicuadrado_obj.__dict__), mimetype='application/json')
+    for x in jicuadrado_obj.estadistico_prueba_ac:
+        print(x)
+
+    return Response(json.dumps("hola"), mimetype='application/json')
