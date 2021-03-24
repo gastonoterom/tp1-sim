@@ -1,6 +1,3 @@
-import numpy as np
-from time import sleep
-
 class JiCuadradoClass:
     # Override __init__
     def __init__(self, intervalos, random_array):
@@ -43,7 +40,8 @@ class JiCuadradoClass:
         # Se calcula el estadistico de prueba para cada intervalo
         fe = self._frecuencia_esperada
         fo = self._frecuencia_obtenida
-        self._estadistico_prueba = [(fe[i]-fo[i])**2/fe[i] for i in range(self._intervalos)]
+        self._estadistico_prueba = [(fe[i]-fo[i])**2/fe[i]
+                                    for i in range(self._intervalos)]
 
     # Getters
 
