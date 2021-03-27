@@ -8,30 +8,31 @@ import Multiplicative from "../components/Multiplicative";
 Vue.use(VueRouter);
 
 const routes = [
-    {
-        path: "/",
-        name: "Inicio",
-        component: Index,
-    },
-    {
-        path: "/random",
-        name: "Random Generator",
-        component: Random,
-    },
-    {
-        path: "/linear",
-        name: "Linear",
-        component: Linear,
-    },
-    {
-        path: "/multiplicative",
-        name: "Multiplicative",
-        component: Multiplicative,
-    },
+  {
+    path: "/",
+    name: "Inicio",
+    component: Index,
+  },
+  {
+    path: "/random",
+    name: "Random Generator",
+    component: Random,
+  },
+  {
+    path: "/linear",
+    name: "Linear",
+    component: Linear,
+  },
+  {
+    path: "/multiplicative",
+    name: "Multiplicative",
+    component: Multiplicative,
+  },
 ];
 
 const router = new VueRouter({
-    routes,
+  routes,
+  mode: "history",
 });
 
 export default router;
