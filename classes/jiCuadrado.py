@@ -34,7 +34,8 @@ class JiCuadradoClass:
         for random_num in self._random_array:
             # SE MULTIPLICA POR DIEZ LOS VALORES A DIVIDIR PORQUE PYTHON TIENE PROBLEMAS DE DECIMALES
             intervalo_a_sumar = int(
-                (random_num * 10) // (self._intervalo_size*10))
+                # Los intervalos tienen este limite: [Li, Ls)
+                (random_num * 10) // (self._intervalo_size*10)) 
             self._frecuencia_obtenida[intervalo_a_sumar] += 1
 
         # Se calcula el estadistico de prueba para cada intervalo

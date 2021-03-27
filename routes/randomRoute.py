@@ -1,6 +1,7 @@
 from app import app
 from flask import request, Response
 from random import random
+from math import trunc
 import json
 
 
@@ -16,7 +17,9 @@ def randomPython():
 
     for i in range(cantidad_muestra):
         random_num = random()
-        random_array.append(
-            trunc(random_num * 10 ** cifras_decimales)/10**cifras_decimales)
+        random_array.append({
+            'num': trunc(random_num * 10 ** cifras_decimales) /
+            10**cifras_decimales
+        })
 
     return Response(json.dumps(random_array), mimetype='application/json')
