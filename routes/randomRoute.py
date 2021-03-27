@@ -29,6 +29,9 @@ def randomPython():
     pagina = int(request.args.get("pagina"))
     pageSize = int(request.args.get("pageSize"))
 
+    if (cantidad_muestra > 1000000):
+        cantidad_muestra = 1000000
+
     random_array = random_nums(cantidad_muestra)
     random_array_sliced = random_array[(
         (pagina - 1) * pageSize):(pagina * pageSize)]
