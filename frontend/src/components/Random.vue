@@ -20,24 +20,22 @@
             @keypress="isNumber($event)"
           ></b-form-input>
         </b-form-group>
-
-        <b-button type="submit" variant="primary">Generar</b-button>
       </b-form>
 
-      <div class="table-container" v-if="randomArray.length > 0">
+      <div :key="cantidad" class="table-container">
         <b-table
           id="random-table"
           :per-page="pageSize"
           :current-page="pageNum"
           striped
           hover
-          :items="randomArray"
+          :items="randomDataProvider"
         ></b-table>
       </div>
-      <div v-if="randomArray.length > 0" class="pagination-container">
+      <div class="pagination-container">
         <b-pagination
           v-model="pageNum"
-          :total-rows="randomArray.length"
+          :total-rows="cantidad"
           :per-page="pageSize"
           aria-controls="random-table"
           align="center"
@@ -54,32 +52,31 @@ export default {
   name: "Random",
   data() {
     return {
-      cantidad: null,
-      randomArray: [],
+      cantidad: 0,
       pageNum: 0,
-      pageSize: 6,
+      pageSize: 5,
     };
   },
   methods: {
+    async randomDataProvider(ctx) {
+      if (this.cantidad == "") return;
+
+      const promise = clienteAxios.get(
+        `/randomPython?cantidad_muestra=${this.cantidad}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}`
+      );
+      // Must return a promise that resolves to an array of items
+      return promise.then((data) => {
+        console.log(data);
+        // Pluck the array of items off our axios response
+        let items = data.data;
+
+        // Must return an array of items or an empty array if an error occurred
+        return items;
+      });
+    },
+
     async onSubmit(event) {
       event.preventDefault();
-      if (this.cantidad <= 0) {
-        alert("Ingrese una cantidad positiva!");
-        return;
-      }
-      if (this.cantidad > 1000000) {
-        alert("Ingrese una cantidad menor o igual a un millon!");
-      }
-
-      let randomNumbers = (
-        await clienteAxios.get("/randomPython", {
-          params: {
-            cantidad_muestra: this.cantidad,
-          },
-        })
-      ).data;
-
-      this.randomArray = randomNumbers;
     },
     isNumber: function (evt) {
       evt = evt ? evt : window.event;
