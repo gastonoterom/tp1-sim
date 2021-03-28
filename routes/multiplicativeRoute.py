@@ -14,6 +14,7 @@ def randomMultiplicativo():
     # El modulo m, G DEBE SER UN NUMERO ENTERO
     # TODO verificar que g sea numero entero
     g = int(request.args.get("g"))
+    
 
     multiplicativeGenerator = MultiplicativeGenerator(k, semilla, g)
     random_array = multiplicativeGenerator.generateNumbers()
