@@ -12,13 +12,15 @@ def randomPython():
     cantidad_muestra = int(request.args.get("cantidad_muestra"))
     seed = int(request.args.get("seed"))
 
-    if (req_pagina := request.args.get("pagina")):
+    req_pagina = request.args.get("pagina")
+    if (req_pagina):
         pagina = int(req_pagina)
     else:
         pagina = 1
-    if (req_pageSize := request.args.get("pageSize")):
-        pageSize = int(req_pageSize)
 
+    req_pageSize = request.args.get("pageSize")
+    if (req_pageSize):
+        pageSize = int(req_pageSize)
     else:
         pageSize = cantidad_muestra
 
