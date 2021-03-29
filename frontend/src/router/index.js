@@ -4,6 +4,7 @@ import Index from "../components/Index";
 import Random from "../components/Random";
 import Linear from "../components/Linear";
 import Multiplicative from "../components/Multiplicative";
+import JiCuadrado from "../components/JiCuadrado";
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes = [
     path: "/multiplicative",
     name: "Multiplicative",
     component: Multiplicative,
+  },
+  {
+    path: "/jicuadrado",
+    name: "JiCuadrado",
+    component: JiCuadrado,
   },
 ];
 

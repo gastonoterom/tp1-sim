@@ -13,6 +13,9 @@ export default {
   components: {
     NavBar,
   },
+  data() {
+    return {};
+  },
 };
 </script>
 <style>

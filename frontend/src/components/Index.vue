@@ -20,7 +20,15 @@
 export default {
   name: "Index",
   data() {
-    return { integrantes: ["Gaston", "Fede", "Gusti", "Riojano", "Igna"] };
+    return {
+      integrantes: [
+        "Belelli, Federico - 64932",
+        "Cesar Nieto, Manuel - 81095",
+        "Mendez Nole, Ignacio - 78599",
+        "Otero, Gastón - 78710",
+        "Peña Beltrami, Gustavo - 81074",
+      ],
+    };
   },
 };
 </script>

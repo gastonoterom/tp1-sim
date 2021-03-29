@@ -1,10 +1,19 @@
 from app import app
 from flask import request, Response
 from classes.randomGenerator import LinearGenerator
+from app import cache
 import json
+import time
 
-@app.route('/randomLineal')
+
+@cache.memoize()
+def randomLinearCache(semilla, k, c, g):
+    return (LinearGenerator(k, c, semilla, g)).generateNumbers()
+
+
+@app.route('/api/randomLineal')
 def randomLineal():
+    start = time.time()
 
     # La semilla es X0
     semilla = int(request.args.get("semilla"))
@@ -17,9 +26,8 @@ def randomLineal():
     # TODO validar que sea entero positivo
     g = int(request.args.get("g"))
 
-    linearGenerator = LinearGenerator(k, c, semilla, g)
-    random_array = linearGenerator.generateNumbers()
+    random_array = randomLinearCache(semilla, k, c, g)
 
+    end = time.time()
+    print("Linear time:", end - start)
     return Response(json.dumps(random_array), mimetype='application/json')
-
-

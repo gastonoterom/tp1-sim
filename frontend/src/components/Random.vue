@@ -74,16 +74,28 @@
         ></b-pagination>
       </div>
     </b-card>
+    <ji-cuadrado
+      style="margin-top: 10px"
+      v-if="randomHash"
+      :key="randomHash"
+      :jiCuadradoProps="jiCuadradoProps"
+    ></ji-cuadrado>
   </div>
 </template>
 
 <script>
 import clienteAxios from "../config/axios";
-
+import JiCuadrado from "./JiCuadrado.vue";
 export default {
+  components: { JiCuadrado },
   name: "Random",
   data() {
     return {
+      jiCuadradoProps: {
+        type: "random",
+        cantidad: 100,
+        random_props: { semilla: "1234" },
+      },
       cantidad: 0,
       cantidadFilas: 0,
       semilla: new Date().getTime(),
@@ -97,7 +109,7 @@ export default {
       if (this.cantidad == "") return;
 
       const promise = clienteAxios.get(
-        `/randomPython?cantidad_muestra=${this.cantidad}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}&seed=${this.semilla}`
+        `/api/randomPython?cantidad_muestra=${this.cantidad}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}&seed=${this.semilla}`
       );
       // Must return a promise that resolves to an array of items
       return promise.then((data) => {
@@ -119,6 +131,11 @@ export default {
         return;
       }
 
+      this.jiCuadradoProps = {
+        type: "random",
+        cantidad: this.cantidad,
+        random_props: { semilla: this.semilla },
+      };
       this.randomHash = new Date().getTime();
       this.cantidadFilas = this.cantidad;
     },
@@ -144,7 +161,7 @@ export default {
 .random {
   width: 100%;
   height: 100%;
-  max-width: 500px;
+  max-width: 800px;
 }
 
 .table-container {
