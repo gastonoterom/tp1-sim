@@ -65,6 +65,9 @@ def histogramGenerator(randomMethod):
         jicuadrado_obj.random_array, bins=bins)
     ax.set_title("Histograma de Frecuencias Obtenidas en Numeros Aleatorios")
 
+    ax.set_xlabel("Numeros aleatorios")
+    ax.set_ylabel("Frecuencias observadas")
+    ax.legend("asdf")
     # Save it to a temporary buffer.
     buf = BytesIO()
     fig.savefig(buf, format="png")

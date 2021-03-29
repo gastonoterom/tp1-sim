@@ -90,16 +90,18 @@ class JiCuadradoClass:
 
             li = str(math.trunc(self._intervalo_size * i * 10) / 10)
             ls = str(math.trunc(self._intervalo_size * (i + 1) * 10) / 10)
-
             intervalo = li + " - " + ls
+
+            fo = math.trunc(self._frecuencia_obtenida[i] * 100) / 100
+            fe = math.trunc(self._frecuencia_esperada[i] * 100) / 100
 
             ep = math.trunc(self._estadistico_prueba[i] * 100) / 100
             ep_ac = math.trunc(self._estadistico_prueba_ac[i] * 100) / 100
 
             rows.append({
                 "intervalo": intervalo,
-                "frecuencia_obtenida": self._frecuencia_obtenida[i],
-                "frecuencia_esperada": self._frecuencia_esperada[i],
+                "frecuencia_obtenida": fo,
+                "frecuencia_esperada": fe,
                 "estadistico_prueba": ep,
                 "estadistico_prueba_ac": ep_ac,
             })

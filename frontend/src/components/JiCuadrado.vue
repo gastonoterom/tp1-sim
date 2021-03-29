@@ -5,7 +5,15 @@
       title="Prueba de Ji Cuadrado"
       :sub-title="subtitle"
     >
+      <p>Cantidad de intervalos:</p>
+      <b-form-select
+        style="max-width: 100px"
+        v-on:change="intervalosChanged"
+        v-model="intervalos"
+        :options="intervalos_select"
+      ></b-form-select>
       <b-table
+        style="margin-top: 10px"
         id="jicuadrado-table"
         :per-page="pageSize"
         :current-page="pageNum"
@@ -33,9 +41,10 @@ export default {
       pageNum: 0,
       pageSize: 5,
       subtitle: "",
-      intervalos: 10,
       histogramSrc: "",
       rows: [],
+      intervalos: 10,
+      intervalos_select: [10, 15, 20],
     };
   },
   props: ["jiCuadradoProps"],
@@ -46,7 +55,11 @@ export default {
       let seed = this.jiCuadradoProps.random_props.semilla;
       let intervalos = this.intervalos;
 
-      this.histogramSrc = `/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
+      this.histogramSrc = `http://localhost:5000/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
+    },
+    intervalosChanged() {
+      this.generateHistogramSrc();
+      this.getRows();
     },
     async getRows() {
       if (this.cantidad == "") return;
