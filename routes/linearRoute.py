@@ -20,14 +20,26 @@ def randomLineal():
     # La constante multiplicativa
     k = int(request.args.get("k"))
     # La constante aditiva DEBE SER RELATIVAMENTE PRIMO A M
-    # TODO validar que sea relativamente primo a m
     c = int(request.args.get("c"))
     # El modulo m, g DEBE SER ENTERO POSITIVO
-    # TODO validar que sea entero positivo
     g = int(request.args.get("g"))
 
+    req_pagina = request.args.get("pagina")
+    if (req_pagina):
+        pagina = int(req_pagina)
+    else:
+        pagina = 1
+
+    req_pageSize = request.args.get("pageSize")
+    if (req_pageSize):
+        pageSize = int(req_pageSize)
+    else:
+        pageSize = 2**g
+
     random_array = randomLinearCache(semilla, k, c, g)
+    random_array_sliced = random_array[(
+        (pagina - 1) * pageSize):(pagina * pageSize)]
 
     end = time.time()
     print("Linear time:", end - start)
-    return Response(json.dumps(random_array), mimetype='application/json')
+    return Response(json.dumps(random_array_sliced), mimetype='application/json')

@@ -10,11 +10,18 @@ import base64
 from io import BytesIO
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
+from routes.linearRoute import randomLinearCache
 
 
 @cache.memoize()
 def getJiCuadradoObjectRandom(cantidad_muestra, seed, intervalos):
     random_array = random_nums(cantidad_muestra, seed)
+    return JiCuadradoClass(intervalos, random_array)
+
+
+@cache.memoize()
+def getJiCuadradoObjectLinear(semilla, k, c, g, intervalos):
+    random_array = randomLinearCache(semilla, k, c, g)
     return JiCuadradoClass(intervalos, random_array)
 
 
@@ -32,6 +39,18 @@ def jiCuadrado(randomMethod):
         # Se crea el objeto JiCuadrado, y automaticamente llama a la funcion que cuenta la frecuencia por intervalos
         jicuadrado_obj = getJiCuadradoObjectRandom(
             cantidad_muestra, seed, intervalos)
+
+    if (randomMethod == "linear"):
+        # La semilla es X0
+        seed = int(request.args.get("seed"))
+        # La constante multiplicativa
+        k = int(request.args.get("k"))
+        # La constante aditiva DEBE SER RELATIVAMENTE PRIMO A M
+        c = int(request.args.get("c"))
+        # El modulo m, g DEBE SER ENTERO POSITIVO
+        g = int(request.args.get("g"))
+        jicuadrado_obj = getJiCuadradoObjectLinear(
+            seed, k, c, g, intervalos)
 
     end = time.time()
 
@@ -54,6 +73,18 @@ def histogramGenerator(randomMethod):
         jicuadrado_obj = getJiCuadradoObjectRandom(
             cantidad_muestra, seed, intervalos)
 
+    if (randomMethod == "linear"):
+        # La semilla es X0
+        seed = int(request.args.get("seed"))
+        # La constante multiplicativa
+        k = int(request.args.get("k"))
+        # La constante aditiva DEBE SER RELATIVAMENTE PRIMO A M
+        c = int(request.args.get("c"))
+        # El modulo m, g DEBE SER ENTERO POSITIVO
+        g = int(request.args.get("g"))
+        jicuadrado_obj = getJiCuadradoObjectLinear(
+            seed, k, c, g, intervalos)
+
     # Generate the figure **without using pyplot**.
     fig = Figure()
     ax = fig.subplots()
@@ -67,7 +98,6 @@ def histogramGenerator(randomMethod):
 
     ax.set_xlabel("Numeros aleatorios")
     ax.set_ylabel("Frecuencias observadas")
-    ax.legend("asdf")
     # Save it to a temporary buffer.
     buf = BytesIO()
     fig.savefig(buf, format="png")

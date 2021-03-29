@@ -2,7 +2,7 @@
   <div class="random">
     <b-card
       class="bcard-index"
-      title="Generador de números aleatorios"
+      title="Generador de Números Aleatorios"
       header="Simulación - UTN FRC"
       sub-title="Método nativo de python"
     >
@@ -46,7 +46,7 @@
           </b-col>
         </b-form-row>
         <b-form-row>
-          <b-col>
+          <b-col style="text-align: center">
             <b-button style="margin-top: 10px" type="submit" variant="primary"
               >Generar</b-button
             >
@@ -63,6 +63,10 @@
           hover
           :items="randomDataProvider"
         ></b-table>
+        <p>
+          Tabla N°1: Serie de numeros aleatorios generados por el metodo nativo
+          de python
+        </p>
       </div>
       <div v-if="randomHash" class="pagination-container">
         <b-pagination
@@ -89,12 +93,13 @@ import JiCuadrado from "./JiCuadrado.vue";
 export default {
   components: { JiCuadrado },
   name: "Random",
+  props: ["isNumber"],
   data() {
     return {
       jiCuadradoProps: {
         type: "random",
-        cantidad: 100,
-        random_props: { semilla: "1234" },
+        cantidad: 0,
+        random_props: { semilla: 0 },
       },
       cantidad: 0,
       cantidadFilas: 0,
@@ -124,6 +129,7 @@ export default {
 
     async onSubmit(event) {
       event.preventDefault();
+
       if (this.cantidad > 1000000 || this.cantidad <= 0) {
         alert(
           "Error: La cantidad de numeros aleatorios a generar debe estar entre 1 y 1000000!"
@@ -138,19 +144,6 @@ export default {
       };
       this.randomHash = new Date().getTime();
       this.cantidadFilas = this.cantidad;
-    },
-    isNumber: function (evt) {
-      evt = evt ? evt : window.event;
-      var charCode = evt.which ? evt.which : evt.keyCode;
-      if (
-        charCode > 31 &&
-        (charCode < 48 || charCode > 57) &&
-        charCode !== 46
-      ) {
-        evt.preventDefault();
-      } else {
-        return true;
-      }
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="random">
+  <div class="multiplicative">
     <b-card
       class="bcard-index"
       title="Generador de números aleatorios"
@@ -48,18 +48,20 @@
         </b-form-group>
       </b-form>
 
-      <button
-        class="btn btn-info"
-        style="margin: 10px 43%;"
+      <b-button
+        variant="primary"
+        style="margin: 10px 43%"
         type="submit"
         @click="onSubmit"
-      >Generar</button>
+      >
+        Generar
+      </b-button>
     </b-card>
   </div>
 </template>
 
 <script>
-import clienteAxios from '../config/axios';
+import clienteAxios from "../config/axios";
 export default {
   name: "Multiplicative",
   data() {
@@ -71,27 +73,14 @@ export default {
       pageSize: 5,
     };
   },
+  props: ["isNumber", "coprimos"],
   methods: {
-
     async onSubmit(event) {
       event.preventDefault();
 
-      const promise = await clienteAxios.get(
+      await clienteAxios.get(
         `/randomMultiplicativo?semilla=${this.semilla}&k=${this.k}&g=${this.g}`
       );
-    },
-    isNumber: function (evt) {
-      evt = evt ? evt : window.event;
-      var charCode = evt.which ? evt.which : evt.keyCode;
-      if (
-        charCode > 31 &&
-        (charCode < 48 || charCode > 57) &&
-        charCode !== 46
-      ) {
-        evt.preventDefault();
-      } else {
-        return true;
-      }
     },
   },
 };
@@ -99,7 +88,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.random {
+.multiplicative {
   width: 100%;
   height: 100%;
   max-width: 500px;
