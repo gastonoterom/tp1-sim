@@ -2,50 +2,60 @@
   <div class="multiplicative">
     <b-card
       class="bcard-index"
-      title="Generador de números aleatorios"
+      title="Generador de Números Aleatorios"
       header="Simulación - UTN FRC"
       sub-title="Método Multiplicativo"
     >
       <b-form>
-        <b-form-group
-          id="input-group-2"
-          label="Ingrese el valor de la semilla: "
-          label-for="input-2"
-        >
-          <b-form-input
-            id="input-2"
-            placeholder="Ingresar semilla"
-            required
-            v-model="semilla"
-            @keypress="isNumber($event)"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          id="input-group-2"
-          label="Ingrese la constante multiplicativa: "
-          label-for="input-2"
-        >
-          <b-form-input
-            id="input-2"
-            placeholder="Ingresar el valor de la constante no nula"
-            required
-            v-model="k"
-            @keypress="isNumber($event)"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group
-          id="input-group-2"
-          label="Ingrese la g: "
-          label-for="input-2"
-        >
-          <b-form-input
-            id="input-2"
-            placeholder="Ingresar g"
-            required
-            v-model="g"
-            @keypress="isNumber($event)"
-          ></b-form-input>
-        </b-form-group>
+        <b-form-row
+          ><b-col>
+            <b-form-group
+              id="input-group-2"
+              label="Semilla: "
+              label-for="input-2"
+            >
+              <b-form-input
+                id="input-2"
+                placeholder="Ingresar semilla"
+                required
+                v-model="semilla"
+                @keypress="isNumber($event)"
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
+          <b-col
+            ><b-form-group
+              id="input-group-2"
+              label="Constante Multiplicativa: "
+              label-for="input-2"
+            >
+              <b-form-input
+                id="input-2"
+                placeholder="Ingresar el valor de la constante no nula"
+                required
+                v-model="valorK"
+                @keypress="isNumber($event)"
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
+        <b-form-row>
+          <b-col>
+            <b-form-group
+              id="input-group-2"
+              label="Valor G: "
+              label-for="input-2"
+            >
+              <b-form-input
+                id="input-2"
+                placeholder="Ingresar g"
+                required
+                v-model="valorG"
+                @keypress="isNumber($event)"
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
       </b-form>
 
       <b-button
@@ -56,31 +66,111 @@
       >
         Generar
       </b-button>
+
+      <div v-if="randomHash" :key="randomHash" class="table-container">
+        <b-table
+          id="multiplicative-table"
+          :per-page="pageSize"
+          :current-page="pageNum"
+          striped
+          hover
+          :items="randomDataProvider"
+        ></b-table>
+        <p>
+          Tabla N°1: Serie de numeros aleatorios generados por el metodo
+          multiplicativo
+        </p>
+      </div>
+      <div v-if="randomHash" class="pagination-container">
+        <b-pagination
+          v-model="pageNum"
+          :total-rows="cantidadFilas"
+          :per-page="pageSize"
+          aria-controls="multiplicative-table"
+          align="center"
+        ></b-pagination>
+      </div>
     </b-card>
+    <ji-cuadrado
+      style="margin-top: 10px"
+      v-if="randomHash"
+      :key="randomHash"
+      :jiCuadradoProps="jiCuadradoProps"
+    >
+    </ji-cuadrado>
   </div>
 </template>
 
 <script>
 import clienteAxios from "../config/axios";
+import JiCuadrado from "./JiCuadrado.vue";
 export default {
+  components: { JiCuadrado },
   name: "Multiplicative",
   data() {
     return {
       semilla: 0,
-      k: 0,
-      g: 0,
+      valorK: 0,
+      valorG: 0,
+      valorC: 0,
       pageNum: 0,
       pageSize: 5,
+      randomHash: null,
+      cantidadFilas: 0,
+      jiCuadradoProps: {
+        type: "multiplicative",
+        cantidad: 0,
+        random_props: { semilla: 0, valorK: 0, valorG: 0, valorC: 0 },
+      },
     };
   },
   props: ["isNumber", "coprimos"],
+
   methods: {
+    async randomDataProvider(ctx) {
+      if (this.cantidad == "") return;
+
+      const promise = clienteAxios.get(
+        `/api/randomLineal?semilla=${this.semilla}&k=${this.valorK}&g=${this.valorG}&c=${this.valorC}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}`
+      );
+      // Must return a promise that resolves to an array of items
+      return promise.then((data) => {
+        console.log(data);
+        // Pluck the array of items off our axios response
+        let items = data.data;
+
+        // Must return an array of items or an empty array if an error occurred
+        return items;
+      });
+    },
     async onSubmit(event) {
       event.preventDefault();
-
-      await clienteAxios.get(
-        `/randomMultiplicativo?semilla=${this.semilla}&k=${this.k}&g=${this.g}`
-      );
+      // El valor de g debe estar entre 1 y 20 para generar hasta un millon de numeros
+      if (this.valorG > 20 || this.valorG <= 0) {
+        alert("El valor de la constante G debe estar entre 1 y 20!");
+        return;
+      }
+      if (this.valorK <= 0) {
+        alert("El valor de la constante multiplicativa debe ser positivo!");
+        return;
+      }
+      // C y 2^g (modulo) deben ser coprimos
+      if (this.semilla % 2 == 0) {
+        alert("La semilla debe ser impar!");
+        return;
+      }
+      this.jiCuadradoProps = {
+        type: "multiplicative",
+        cantidad: Math.pow(2, this.valorG) / 4,
+        random_props: {
+          semilla: this.semilla,
+          valorG: this.valorG,
+          valorK: this.valorK,
+          valorC: 0,
+        },
+      };
+      this.randomHash = new Date().getTime();
+      this.cantidadFilas = Math.pow(2, this.valorG);
     },
   },
 };
@@ -91,7 +181,7 @@ export default {
 .multiplicative {
   width: 100%;
   height: 100%;
-  max-width: 500px;
+  max-width: 800px;
 }
 
 .table-container {

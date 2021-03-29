@@ -11,6 +11,7 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from routes.linearRoute import randomLinearCache
+from routes.multiplicativeRoute import randomMultCache
 
 
 @cache.memoize()
@@ -22,6 +23,12 @@ def getJiCuadradoObjectRandom(cantidad_muestra, seed, intervalos):
 @cache.memoize()
 def getJiCuadradoObjectLinear(semilla, k, c, g, intervalos):
     random_array = randomLinearCache(semilla, k, c, g)
+    return JiCuadradoClass(intervalos, random_array)
+
+
+@cache.memoize()
+def getJiCuadradoObjectMult(k, semilla, g, intervalos):
+    random_array = randomMultCache(semilla, k, g)
     return JiCuadradoClass(intervalos, random_array)
 
 
@@ -51,6 +58,15 @@ def jiCuadrado(randomMethod):
         g = int(request.args.get("g"))
         jicuadrado_obj = getJiCuadradoObjectLinear(
             seed, k, c, g, intervalos)
+
+    if (randomMethod == "multiplicative"):
+        # La semilla es X0
+        seed = int(request.args.get("seed"))
+        # La constante multiplicativa
+        k = int(request.args.get("k"))
+        # El modulo m, g DEBE SER ENTERO POSITIVO
+        g = int(request.args.get("g"))
+        jicuadrado_obj = getJiCuadradoObjectMult(k, seed, g, intervalos)
 
     end = time.time()
 
@@ -84,6 +100,15 @@ def histogramGenerator(randomMethod):
         g = int(request.args.get("g"))
         jicuadrado_obj = getJiCuadradoObjectLinear(
             seed, k, c, g, intervalos)
+
+    if (randomMethod == "multiplicative"):
+        # La semilla es X0
+        seed = int(request.args.get("seed"))
+        # La constante multiplicativa
+        k = int(request.args.get("k"))
+        # El modulo m, g DEBE SER ENTERO POSITIVO
+        g = int(request.args.get("g"))
+        jicuadrado_obj = getJiCuadradoObjectMult(k, seed, g, intervalos)
 
     # Generate the figure **without using pyplot**.
     fig = Figure()
