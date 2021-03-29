@@ -19,6 +19,7 @@ class RandomGenerator(ABC):
             random_array.append({"num": random_number})
         return random_array
 
+
 class LinearGenerator(RandomGenerator):
     def __init__(self, k, c, seed, g, cifras_decimales=4):
         super().__init__(seed, g, cifras_decimales)

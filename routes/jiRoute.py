@@ -89,8 +89,8 @@ def histogramGenerator(randomMethod):
     fig = Figure()
     ax = fig.subplots()
 
-    bins = [math.trunc(1 / intervalos * i * 100) /
-            100 for i in range(intervalos + 1)]
+    bins = [math.trunc(1 / intervalos * i * 10000) /
+            10000 for i in range(intervalos + 1)]
 
     values, bin_bounds, bars = ax.hist(
         jicuadrado_obj.random_array, bins=bins)

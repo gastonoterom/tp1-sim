@@ -39,7 +39,7 @@ class JiCuadradoClass:
             # SE MULTIPLICA POR DIEZ LOS VALORES A DIVIDIR PORQUE PYTHON TIENE PROBLEMAS DE DECIMALES
             intervalo_a_sumar = int(
                 # Los intervalos tienen este limite: [Li, Ls)
-                (random_num["num"] * 100) // (self._intervalo_size * 100))
+                (random_num["num"] * 10000) // (self._intervalo_size * 10000))
             self._frecuencia_obtenida[intervalo_a_sumar] += 1
 
         # Se calcula el estadistico de prueba para cada intervalo
@@ -88,15 +88,15 @@ class JiCuadradoClass:
         rows = []
         for i in range(self._intervalos):
 
-            li = str(math.trunc(self._intervalo_size * i * 10) / 10)
-            ls = str(math.trunc(self._intervalo_size * (i + 1) * 10) / 10)
+            li = str(math.trunc(self._intervalo_size * i * 10000) / 10000)
+            ls = str(math.trunc(self._intervalo_size * (i + 1) * 10000) / 10000)
             intervalo = li + " - " + ls
 
-            fo = math.trunc(self._frecuencia_obtenida[i] * 100) / 100
-            fe = math.trunc(self._frecuencia_esperada[i] * 100) / 100
+            fo = math.trunc(self._frecuencia_obtenida[i] * 10000) / 10000
+            fe = math.trunc(self._frecuencia_esperada[i] * 10000) / 10000
 
-            ep = math.trunc(self._estadistico_prueba[i] * 100) / 100
-            ep_ac = math.trunc(self._estadistico_prueba_ac[i] * 100) / 100
+            ep = math.trunc(self._estadistico_prueba[i] * 10000) / 10000
+            ep_ac = math.trunc(self._estadistico_prueba_ac[i] * 10000) / 10000
 
             rows.append({
                 "intervalo": intervalo,
