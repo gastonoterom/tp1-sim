@@ -1,7 +1,7 @@
-const axios = require("axios").default;
+import axios from "axios";
 
 const clienteAxios = axios.create({
-  baseURL: "https://tp1-sim.herokuapp.com/",
+  baseURL: "http://localhost:5000",
 });
 
 export default clienteAxios;

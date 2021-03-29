@@ -1,3 +1,6 @@
+import math
+
+
 class JiCuadradoClass:
     # Override __init__
     def __init__(self, intervalos, random_array):
@@ -12,6 +15,7 @@ class JiCuadradoClass:
         self._frecuencia_obtenida = []
         self._frecuencia_esperada = []
         self._estadistico_prueba = []
+        self._estadistico_prueba_ac = []
 
         # Se llama a la funcion update intervalos
         self._update_valores()
@@ -22,7 +26,7 @@ class JiCuadradoClass:
     def _update_valores(self):
 
         # El tamaño de cada intervalo cambia
-        self._intervalo_size = 1/self._intervalos
+        self._intervalo_size = 1 / self._intervalos
 
         # En este ji cuadrado se espera que la frecuencia esperada sea igual para cada intervalo
         fe = len(self._random_array) / self._intervalos
@@ -35,16 +39,29 @@ class JiCuadradoClass:
             # SE MULTIPLICA POR DIEZ LOS VALORES A DIVIDIR PORQUE PYTHON TIENE PROBLEMAS DE DECIMALES
             intervalo_a_sumar = int(
                 # Los intervalos tienen este limite: [Li, Ls)
-                (random_num * 10) // (self._intervalo_size*10)) 
+                (random_num["num"] * 100) // (self._intervalo_size * 100))
             self._frecuencia_obtenida[intervalo_a_sumar] += 1
 
         # Se calcula el estadistico de prueba para cada intervalo
         fe = self._frecuencia_esperada
         fo = self._frecuencia_obtenida
-        self._estadistico_prueba = [(fe[i]-fo[i])**2/fe[i]
+        self._estadistico_prueba = [(fe[i] - fo[i])**2 / fe[i]
                                     for i in range(self._intervalos)]
 
+        self._estadistico_prueba_ac = []
+
+        ac = 0
+        for i in self._estadistico_prueba:
+            ac += i
+            self._estadistico_prueba_ac.append(ac)
+
     # Getters
+    @property
+    def random_array(self):
+        ra = []
+        for rn in self._random_array:
+            ra.append(rn["num"])
+        return ra
 
     @property
     def frecuencia_obtenida(self):
@@ -60,17 +77,38 @@ class JiCuadradoClass:
 
     @property
     def estadistico_prueba_ac(self):
-        ac = 0
-        for value in self._estadistico_prueba:
-            ac += value
-            yield str(ac) + "\n"
+        return self._estadistico_prueba_ac
 
     @property
     def intervalos(self):
         return self._intervalos
 
-    # Setters
-    @intervalos.setter
-    def intervalos(self, new_value):
-        self._intervalos = new_value
-        self._update_valores()
+    @property
+    def rows(self):
+        rows = []
+        for i in range(self._intervalos):
+
+            li = str(math.trunc(self._intervalo_size * i * 10) / 10)
+            ls = str(math.trunc(self._intervalo_size * (i + 1) * 10) / 10)
+            intervalo = li + " - " + ls
+
+            fo = math.trunc(self._frecuencia_obtenida[i] * 100) / 100
+            fe = math.trunc(self._frecuencia_esperada[i] * 100) / 100
+
+            ep = math.trunc(self._estadistico_prueba[i] * 100) / 100
+            ep_ac = math.trunc(self._estadistico_prueba_ac[i] * 100) / 100
+
+            rows.append({
+                "intervalo": intervalo,
+                "frecuencia_obtenida": fo,
+                "frecuencia_esperada": fe,
+                "estadistico_prueba": ep,
+                "estadistico_prueba_ac": ep_ac,
+            })
+
+        return rows
+#    # Setters
+#    @intervalos.setter
+#    def intervalos(self, new_value):
+#        self._intervalos = new_value
+#        self._update_valores()
