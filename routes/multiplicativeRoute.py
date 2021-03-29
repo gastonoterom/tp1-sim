@@ -20,6 +20,7 @@ def randomMultiplicativo():
     k = int(request.args.get("k"))
     # El modulo m, G DEBE SER UN NUMERO ENTERO
     g = int(request.args.get("g"))
+    
 
     random_array = randomMultCache(k, semilla, g)
 
