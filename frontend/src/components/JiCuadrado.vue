@@ -46,7 +46,7 @@ export default {
       let seed = this.jiCuadradoProps.random_props.semilla;
       let intervalos = this.intervalos;
 
-      this.histogramSrc = `http://localhost:5000/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
+      this.histogramSrc = `/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
     },
     async getRows() {
       if (this.cantidad == "") return;
