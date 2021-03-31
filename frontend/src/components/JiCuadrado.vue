@@ -20,7 +20,17 @@
         striped
         hover
         :items="rows"
-      ></b-table>
+      >
+      </b-table>
+      <b-tfoot>
+        <b-tr v-if="this.jiCuadradoProps">
+          <b-td colspan="2" variant="secondary" class="text-right">
+            Sumatoria de frecuencias obtenidas:
+            <b>{{ this.jiCuadradoProps.cantidad }}</b>
+          </b-td>
+        </b-tr>
+      </b-tfoot>
+
       <p>Tabla N°2: Prueba de Ji Cuadrado para serie de numeros aleatorios</p>
       <b-pagination
         v-model="pageNum"
@@ -63,20 +73,19 @@ export default {
       let valorK, valorG, valorC;
       switch (tipo) {
         case "random":
-          cantidad = this.jiCuadradoProps.cantidad;
-          this.histogramSrc = `/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
+          this.histogramSrc = `http://127.0.0.1:5000/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
           break;
         case "linear":
           valorK = this.jiCuadradoProps.random_props.valorK;
           valorG = this.jiCuadradoProps.random_props.valorG;
           valorC = this.jiCuadradoProps.random_props.valorC;
-          this.histogramSrc = `/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
+          this.histogramSrc = `http://127.0.0.1:5000/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
           break;
         case "multiplicative":
           valorK = this.jiCuadradoProps.random_props.valorK;
           valorG = this.jiCuadradoProps.random_props.valorG;
           valorC = this.jiCuadradoProps.random_props.valorC;
-          this.histogramSrc = `/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
+          this.histogramSrc = `http://127.0.0.1:5000/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
           break;
       }
     },
@@ -97,7 +106,6 @@ export default {
 
       switch (tipo) {
         case "random":
-          cantidad = this.jiCuadradoProps.cantidad;
           promise = clienteAxios.get(
             `/api/jicuadrado/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`
           );
@@ -125,7 +133,7 @@ export default {
         console.log(data);
         // Pluck the array of items off our axios response
         let items = data.data;
-
+        console.log(items);
         this.rows = items;
       });
     },

@@ -21,14 +21,15 @@ def getJiCuadradoObjectRandom(cantidad_muestra, seed, intervalos):
 
 
 @cache.memoize()
-def getJiCuadradoObjectLinear(semilla, k, c, g, intervalos):
-    random_array = randomLinearCache(semilla, k, c, g)
+def getJiCuadradoObjectLinear(semilla, k, c, g, intervalos, cantidad_muestra):
+    print(cantidad_muestra, "CANTIDAD MUESTRA \n\n\n\n")
+    random_array = randomLinearCache(semilla, k, c, g, cantidad_muestra)
     return JiCuadradoClass(intervalos, random_array)
 
 
 @cache.memoize()
-def getJiCuadradoObjectMult(k, semilla, g, intervalos):
-    random_array = randomMultCache(semilla, k, g)
+def getJiCuadradoObjectMult(k, semilla, g, intervalos, cantidad_muestra):
+    random_array = randomMultCache(semilla, k, g, cantidad_muestra)
     return JiCuadradoClass(intervalos, random_array)
 
 
@@ -56,8 +57,11 @@ def jiCuadrado(randomMethod):
         c = int(request.args.get("c"))
         # El modulo m, g DEBE SER ENTERO POSITIVO
         g = int(request.args.get("g"))
+        # Tamaño de la muestra a mostrar
+        cantidad_muestra = int(request.args.get("cantidad_muestra"))
+
         jicuadrado_obj = getJiCuadradoObjectLinear(
-            seed, k, c, g, intervalos)
+            seed, k, c, g, intervalos, cantidad_muestra)
 
     if (randomMethod == "multiplicative"):
         # La semilla es X0
@@ -66,7 +70,10 @@ def jiCuadrado(randomMethod):
         k = int(request.args.get("k"))
         # El modulo m, g DEBE SER ENTERO POSITIVO
         g = int(request.args.get("g"))
-        jicuadrado_obj = getJiCuadradoObjectMult(k, seed, g, intervalos)
+        cantidad_muestra = int(request.args.get("cantidad_muestra"))
+
+        jicuadrado_obj = getJiCuadradoObjectMult(
+            k, seed, g, intervalos, cantidad_muestra)
 
     end = time.time()
 
@@ -98,8 +105,11 @@ def histogramGenerator(randomMethod):
         c = int(request.args.get("c"))
         # El modulo m, g DEBE SER ENTERO POSITIVO
         g = int(request.args.get("g"))
+        # Tamaño de la muestra a mostrar
+        cantidad_muestra = int(request.args.get("cantidad_muestra"))
+
         jicuadrado_obj = getJiCuadradoObjectLinear(
-            seed, k, c, g, intervalos)
+            seed, k, c, g, intervalos, cantidad_muestra)
 
     if (randomMethod == "multiplicative"):
         # La semilla es X0
@@ -108,7 +118,10 @@ def histogramGenerator(randomMethod):
         k = int(request.args.get("k"))
         # El modulo m, g DEBE SER ENTERO POSITIVO
         g = int(request.args.get("g"))
-        jicuadrado_obj = getJiCuadradoObjectMult(k, seed, g, intervalos)
+        cantidad_muestra = int(request.args.get("cantidad_muestra"))
+
+        jicuadrado_obj = getJiCuadradoObjectMult(
+            k, seed, g, intervalos, cantidad_muestra)
 
     # Generate the figure **without using pyplot**.
     fig = Figure()

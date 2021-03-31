@@ -50,6 +50,14 @@
             <b-button style="margin-top: 10px" type="submit" variant="primary"
               >Generar</b-button
             >
+            <b-button
+              variant="primary"
+              style="margin: 10px 46%"
+              type="submit"
+              @click="unoMas"
+            >
+              +
+            </b-button>
           </b-col>
         </b-form-row>
       </b-form>
@@ -110,6 +118,10 @@ export default {
     };
   },
   methods: {
+    async unoMas() {
+      this.cantidad++;
+      this.onSubmit({ preventDefault: () => {} });
+    },
     async randomDataProvider(ctx) {
       if (this.cantidad == "") return;
 

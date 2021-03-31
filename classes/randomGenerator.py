@@ -8,10 +8,10 @@ class RandomGenerator(ABC):
         self.seed = seed
         self.m = 2**g
 
-    def generateNumbers(self):
+    def generateNumbers(self, cantidad):
         xi = self.seed
         random_array = []
-        for i in range(self.n):
+        for i in range(cantidad):
             xi_mas_uno = (self.a * xi + self.c) % self.m
             xi = xi_mas_uno
             random_number = trunc(

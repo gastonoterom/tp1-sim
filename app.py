@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_caching import Cache
+import flask_excel as excel
 
 app = Flask(__name__, template_folder='frontend/dist')
 
@@ -13,9 +14,9 @@ config = {
 # tell Flask to use the above defined config
 app.config.from_mapping(config)
 cache = Cache(app)
-
+excel.init_excel(app)
 CORS(app)
 
 
-import frontend
+#import frontend
 from routes import linearRoute, jiRoute, multiplicativeRoute, randomRoute

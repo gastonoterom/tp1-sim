@@ -69,8 +69,24 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <b-form-row
+          ><b-col>
+            <b-form-group
+              id="input-group-2"
+              label="Cantidad a generar: "
+              label-for="input-2"
+            >
+              <b-form-input
+                id="input-2"
+                placeholder="Ingresar cantidad"
+                required
+                v-model="cantidadGenerar"
+                @keypress="isNumber($event)"
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
       </b-form>
-
       <b-button
         variant="primary"
         style="margin: 10px 43%"
@@ -79,8 +95,16 @@
       >
         Generar
       </b-button>
-
+      <b-button
+        variant="primary"
+        style="margin: 10px 46%"
+        type="submit"
+        @click="unoMas"
+      >
+        +
+      </b-button>
       <div v-if="randomHash" :key="randomHash" class="table-container">
+        <p>Cantidad de numeros aleatorios: {{ this.cantidadFilas }}</p>
         <b-table
           id="linear-table"
           :per-page="pageSize"
@@ -128,12 +152,19 @@ export default {
       valorC: 0,
       pageNum: 0,
       pageSize: 5,
+      cantidadGenerar: 20,
       randomHash: null,
       cantidadFilas: 0,
       jiCuadradoProps: {
         type: "linear",
         cantidad: 0,
-        random_props: { semilla: 0, valorK: 0, valorG: 0, valorC: 0 },
+        random_props: {
+          semilla: 0,
+          valorK: 0,
+          valorG: 0,
+          valorC: 0,
+          cantidad: 0,
+        },
       },
     };
   },
@@ -144,7 +175,7 @@ export default {
       if (this.cantidad == "") return;
 
       const promise = clienteAxios.get(
-        `/api/randomLineal?semilla=${this.semilla}&k=${this.valorK}&g=${this.valorG}&c=${this.valorC}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}`
+        `/api/randomLineal?semilla=${this.semilla}&k=${this.valorK}&g=${this.valorG}&c=${this.valorC}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}`
       );
       // Must return a promise that resolves to an array of items
       return promise.then((data) => {
@@ -155,6 +186,10 @@ export default {
         // Must return an array of items or an empty array if an error occurred
         return items;
       });
+    },
+    async unoMas() {
+      this.cantidadGenerar++;
+      this.onSubmit({ preventDefault: () => {} });
     },
     async onSubmit(event) {
       event.preventDefault();
@@ -167,6 +202,10 @@ export default {
         alert("El valor de la constante multiplicativa debe ser positivo!");
         return;
       }
+      if (this.cantidadGenerar > 1000000 || this.cantidadGenerar <= 0) {
+        alert("La cantidad a generar debe estar entre 0 y 1000000!");
+        return;
+      }
       // C y 2^g (modulo) deben ser coprimos
       if (!this.coprimos(this.valorC, Math.pow(2, this.valorG))) {
         alert("La constante C y el modulo (2^g) deben ser coprimos!");
@@ -174,7 +213,7 @@ export default {
       }
       this.jiCuadradoProps = {
         type: "linear",
-        cantidad: Math.pow(2, this.valorG),
+        cantidad: this.cantidadGenerar,
         random_props: {
           semilla: this.semilla,
           valorG: this.valorG,
@@ -183,7 +222,7 @@ export default {
         },
       };
       this.randomHash = new Date().getTime();
-      this.cantidadFilas = Math.pow(2, this.valorG);
+      this.cantidadFilas = this.cantidadGenerar;
     },
   },
 };

@@ -7,8 +7,8 @@ import time
 
 
 @cache.memoize()
-def randomLinearCache(semilla, k, c, g):
-    return (LinearGenerator(k, c, semilla, g)).generateNumbers()
+def randomLinearCache(semilla, k, c, g, cantidad):
+    return (LinearGenerator(k, c, semilla, g)).generateNumbers(cantidad)
 
 
 @app.route('/api/randomLineal')
@@ -23,6 +23,8 @@ def randomLineal():
     c = int(request.args.get("c"))
     # El modulo m, g DEBE SER ENTERO POSITIVO
     g = int(request.args.get("g"))
+    # Cantidad de elementos a mostrar
+    cantidad_muestra = int(request.args.get("cantidad_muestra"))
 
     req_pagina = request.args.get("pagina")
     if (req_pagina):
@@ -34,9 +36,9 @@ def randomLineal():
     if (req_pageSize):
         pageSize = int(req_pageSize)
     else:
-        pageSize = 2**g
+        pageSize = cantidad_muestra
 
-    random_array = randomLinearCache(semilla, k, c, g)
+    random_array = randomLinearCache(semilla, k, c, g, cantidad_muestra)
     random_array_sliced = random_array[(
         (pagina - 1) * pageSize):(pagina * pageSize)]
 

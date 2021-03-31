@@ -55,6 +55,21 @@
               ></b-form-input>
             </b-form-group>
           </b-col>
+          <b-col>
+            <b-form-group
+              id="input-group-2"
+              label="Cantidad a generar: "
+              label-for="input-2"
+            >
+              <b-form-input
+                id="input-2"
+                placeholder="Ingresar cantidad"
+                required
+                v-model="cantidadGenerar"
+                @keypress="isNumber($event)"
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
         </b-form-row>
       </b-form>
 
@@ -66,7 +81,14 @@
       >
         Generar
       </b-button>
-
+      <b-button
+        variant="primary"
+        style="margin: 10px 46%"
+        type="submit"
+        @click="unoMas"
+      >
+        +
+      </b-button>
       <div v-if="randomHash" :key="randomHash" class="table-container">
         <b-table
           id="multiplicative-table"
@@ -116,6 +138,7 @@ export default {
       pageNum: 0,
       pageSize: 5,
       randomHash: null,
+      cantidadGenerar: 20,
       cantidadFilas: 0,
       jiCuadradoProps: {
         type: "multiplicative",
@@ -127,11 +150,15 @@ export default {
   props: ["isNumber", "coprimos"],
 
   methods: {
+    async unoMas() {
+      this.cantidadGenerar++;
+      this.onSubmit({ preventDefault: () => {} });
+    },
     async randomDataProvider(ctx) {
       if (this.cantidad == "") return;
 
       const promise = clienteAxios.get(
-        `/api/randomLineal?semilla=${this.semilla}&k=${this.valorK}&g=${this.valorG}&c=${this.valorC}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}`
+        `/api/randomLineal?semilla=${this.semilla}&k=${this.valorK}&g=${this.valorG}&c=${this.valorC}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}`
       );
       // Must return a promise that resolves to an array of items
       return promise.then((data) => {
@@ -159,9 +186,14 @@ export default {
         alert("La semilla debe ser impar!");
         return;
       }
+      if (this.cantidadGenerar > 1000000 || this.cantidadGenerar <= 0) {
+        alert("La cantidad a generar debe estar entre 0 y 1000000!");
+        return;
+      }
+
       this.jiCuadradoProps = {
         type: "multiplicative",
-        cantidad: Math.pow(2, this.valorG) / 4,
+        cantidad: this.cantidadGenerar,
         random_props: {
           semilla: this.semilla,
           valorG: this.valorG,
@@ -170,7 +202,7 @@ export default {
         },
       };
       this.randomHash = new Date().getTime();
-      this.cantidadFilas = Math.pow(2, this.valorG);
+      this.cantidadFilas = this.cantidadGenerar;
     },
   },
 };
