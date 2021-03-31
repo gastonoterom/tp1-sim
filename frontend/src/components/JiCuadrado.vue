@@ -73,19 +73,19 @@ export default {
       let valorK, valorG, valorC;
       switch (tipo) {
         case "random":
-          this.histogramSrc = `http://127.0.0.1:5000/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
+          this.histogramSrc = `https://tp1-sim.gastonotero.com/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
           break;
         case "linear":
           valorK = this.jiCuadradoProps.random_props.valorK;
           valorG = this.jiCuadradoProps.random_props.valorG;
           valorC = this.jiCuadradoProps.random_props.valorC;
-          this.histogramSrc = `http://127.0.0.1:5000/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
+          this.histogramSrc = `https://tp1-sim.gastonotero.com/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
           break;
         case "multiplicative":
           valorK = this.jiCuadradoProps.random_props.valorK;
           valorG = this.jiCuadradoProps.random_props.valorG;
           valorC = this.jiCuadradoProps.random_props.valorC;
-          this.histogramSrc = `http://127.0.0.1:5000/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
+          this.histogramSrc = `https://tp1-sim.gastonotero.com/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
           break;
       }
     },
