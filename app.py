@@ -18,5 +18,5 @@ excel.init_excel(app)
 CORS(app)
 
 
-#import frontend
+import frontend
 from routes import linearRoute, jiRoute, multiplicativeRoute, randomRoute

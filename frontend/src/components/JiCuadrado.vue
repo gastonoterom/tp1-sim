@@ -44,6 +44,8 @@
         Figura N°1: Histograma de numeros aleatorios obtenidos dentro de
         intervalos
       </p>
+      <h4>Descargar serie de numeros</h4>
+      <b-button :href="downloadLink">Descargar</b-button>
     </b-card>
   </div>
 </template>
@@ -53,6 +55,7 @@ import clienteAxios from "../config/axios";
 export default {
   data() {
     return {
+      downloadLink: null,
       pageNum: 0,
       pageSize: 5,
       subtitle: "",
@@ -73,19 +76,19 @@ export default {
       let valorK, valorG, valorC;
       switch (tipo) {
         case "random":
-          this.histogramSrc = `https://tp1-sim.gastonotero.com/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
+          this.histogramSrc = `${clienteAxios.defaults.baseURL}/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
           break;
         case "linear":
           valorK = this.jiCuadradoProps.random_props.valorK;
           valorG = this.jiCuadradoProps.random_props.valorG;
           valorC = this.jiCuadradoProps.random_props.valorC;
-          this.histogramSrc = `https://tp1-sim.gastonotero.com/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
+          this.histogramSrc = `${clienteAxios.defaults.baseURL}/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
           break;
         case "multiplicative":
           valorK = this.jiCuadradoProps.random_props.valorK;
           valorG = this.jiCuadradoProps.random_props.valorG;
           valorC = this.jiCuadradoProps.random_props.valorC;
-          this.histogramSrc = `https://tp1-sim.gastonotero.com/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
+          this.histogramSrc = `${clienteAxios.defaults.baseURL}/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
           break;
       }
     },
@@ -103,28 +106,29 @@ export default {
       let intervalos = this.intervalos;
       let promise;
       let valorK, valorG, valorC;
-
+      let link;
       switch (tipo) {
         case "random":
-          promise = clienteAxios.get(
-            `/api/jicuadrado/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`
-          );
+          link = `/api/jicuadrado/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
+          this.downloadLink = `${clienteAxios.defaults.baseURL}${link}&download=true`;
+          promise = clienteAxios.get(this.downloadLink);
           break;
         case "linear":
           valorK = this.jiCuadradoProps.random_props.valorK;
           valorG = this.jiCuadradoProps.random_props.valorG;
           valorC = this.jiCuadradoProps.random_props.valorC;
-          promise = clienteAxios.get(
-            `/api/jicuadrado/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`
-          );
+
+          link = `/api/jicuadrado/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
+          this.downloadLink = `${clienteAxios.defaults.baseURL}${link}&download=true`;
+          promise = clienteAxios.get(link);
           break;
         case "multiplicative":
           valorK = this.jiCuadradoProps.random_props.valorK;
           valorG = this.jiCuadradoProps.random_props.valorG;
           valorC = this.jiCuadradoProps.random_props.valorC;
-          promise = clienteAxios.get(
-            `/api/jicuadrado/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`
-          );
+          link = `/api/jicuadrado/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&k=${valorK}&g=${valorG}&c=${valorC}`;
+          this.downloadLink = `${clienteAxios.defaults.baseURL}${link}&download=true`;
+          promise = clienteAxios.get(link);
           break;
       }
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const clienteAxios = axios.create({
-  baseURL: "https://tp1-sim.gastonotero.com",
+  baseURL: "http://localhost:5000",
 });
 
 export default clienteAxios;

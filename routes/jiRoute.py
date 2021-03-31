@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from routes.linearRoute import randomLinearCache
 from routes.multiplicativeRoute import randomMultCache
+from app import excel
 
 
 @cache.memoize()
@@ -78,6 +79,16 @@ def jiCuadrado(randomMethod):
     end = time.time()
 
     print("Ji cuadrado response time:", end - start)
+
+    download = request.args.get("download")
+
+    if (download == "true"):
+        ra = []
+        for rn in jicuadrado_obj.random_array_obj:
+            aux = []
+            aux.append(rn['num'])
+            ra.append(aux)
+        return excel.make_response_from_array(ra, "csv", file_name=randomMethod)
 
     return Response(json.dumps(jicuadrado_obj.rows), mimetype='application/json')
 

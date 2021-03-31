@@ -64,6 +64,10 @@ class JiCuadradoClass:
         return ra
 
     @property
+    def random_array_obj(self):
+        return self._random_array
+
+    @property
     def frecuencia_obtenida(self):
         return self._frecuencia_obtenida
 

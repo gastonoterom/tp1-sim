@@ -109,7 +109,7 @@ export default {
         cantidad: 0,
         random_props: { semilla: 0 },
       },
-      cantidad: 0,
+      cantidad: 20,
       cantidadFilas: 0,
       semilla: new Date().getTime(),
       pageNum: 0,

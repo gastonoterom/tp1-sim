@@ -194,7 +194,7 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       // El valor de g debe estar entre 1 y 20 para generar hasta un millon de numeros
-      if (this.valorG > 20 || this.valorG <= 0) {
+      if (this.valorG <= 0) {
         alert("El valor de la constante G debe estar entre 1 y 20!");
         return;
       }
