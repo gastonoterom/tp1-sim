@@ -111,7 +111,7 @@ export default {
         case "random":
           link = `/api/jicuadrado/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}`;
           this.downloadLink = `${clienteAxios.defaults.baseURL}${link}&download=true`;
-          promise = clienteAxios.get(this.downloadLink);
+          promise = clienteAxios.get(link);
           break;
         case "linear":
           valorK = this.jiCuadradoProps.random_props.valorK;
