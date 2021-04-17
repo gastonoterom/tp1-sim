@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from math import trunc
 
+# tp2 classes
+
 
 class RandomGenerator(ABC):
     def __init__(self, seed, g, cifras_decimales=4):

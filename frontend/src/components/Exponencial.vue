@@ -1,10 +1,10 @@
 <template>
-  <div class="linear">
+  <div class="exponencial">
     <b-card
       class="bcard-index"
       title="Generador de Números Aleatorios"
       header="Simulación - UTN FRC"
-      sub-title="Método Lineal"
+      sub-title="Método Exponencial"
     >
       <b-form>
         <b-form-row
@@ -26,44 +26,14 @@
           <b-col
             ><b-form-group
               id="input-group-2"
-              label="Constante Multiplicativa: "
+              label="Cantidad a generar: "
               label-for="input-2"
             >
               <b-form-input
                 id="input-2"
-                placeholder="Ingresar el valor de la constante no nula"
+                placeholder=""
                 required
-                v-model="valorK"
-                @keypress="isNumber($event)"
-              ></b-form-input>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-        <b-form-row>
-          <b-col
-            ><b-form-group
-              id="input-group-2"
-              label="Valor C:"
-              label-for="input-2"
-            >
-              <b-form-input
-                id="input-2"
-                required
-                v-model="valorC"
-                @keypress="isNumber($event)"
-              ></b-form-input> </b-form-group
-          ></b-col>
-          <b-col>
-            <b-form-group
-              id="input-group-2"
-              label="Valor G: "
-              label-for="input-2"
-            >
-              <b-form-input
-                id="input-2"
-                placeholder="Ingresar g"
-                required
-                v-model="valorG"
+                v-model="cantidadGenerar"
                 @keypress="isNumber($event)"
               ></b-form-input>
             </b-form-group>
@@ -73,15 +43,14 @@
           ><b-col>
             <b-form-group
               id="input-group-2"
-              label="Cantidad a generar: "
+              label="Media: "
               label-for="input-2"
             >
               <b-form-input
                 id="input-2"
-                placeholder="Ingresar cantidad"
+                placeholder=""
                 required
-                v-model="cantidadGenerar"
-                @keypress="isNumber($event)"
+                v-model="media"
               ></b-form-input>
             </b-form-group>
           </b-col>
@@ -106,7 +75,7 @@
       <div v-if="randomHash" :key="randomHash" class="table-container">
         <p>Cantidad de numeros aleatorios: {{ this.cantidadFilas }}</p>
         <b-table
-          id="linear-table"
+          id="exponencial-table"
           :per-page="pageSize"
           :current-page="pageNum"
           striped
@@ -114,8 +83,8 @@
           :items="randomDataProvider"
         ></b-table>
         <p>
-          Tabla N°1: Serie de numeros aleatorios generados por el metodo lineal
-          multiplicativo
+          Tabla N°1: Serie de numeros aleatorios generados por el metodo
+          exponencial
         </p>
       </div>
       <div v-if="randomHash" class="pagination-container">
@@ -123,59 +92,56 @@
           v-model="pageNum"
           :total-rows="cantidadFilas"
           :per-page="pageSize"
-          aria-controls="linear-table"
+          aria-controls="exponencial-table"
           align="center"
         ></b-pagination>
       </div>
     </b-card>
-    <ji-cuadrado
+    <Histogram
       style="margin-top: 10px"
       v-if="randomHash"
       :key="randomHash"
-      :jiCuadradoProps="jiCuadradoProps"
+      :histogramProps="histogramProps"
     >
-    </ji-cuadrado>
+    </Histogram>
   </div>
 </template>
 
 <script>
 import clienteAxios from "../config/axios";
-import JiCuadrado from "./JiCuadrado.vue";
+import Histogram from "./Histogram.vue";
 export default {
-  components: { JiCuadrado },
-  name: "Multiplicative",
+  components: { Histogram },
+  name: "Exponencial",
   data() {
     return {
-      semilla: 0,
-      valorK: 0,
-      valorG: 0,
-      valorC: 0,
-      pageNum: 0,
+      pageNum: 1,
       pageSize: 5,
       cantidadGenerar: 20,
-      randomHash: null,
+      semilla: 0,
+      seed: 0,
+      media: 1,
+      randomHash: false,
       cantidadFilas: 0,
-      jiCuadradoProps: {
-        type: "linear",
+      histogramProps: {
+        type: "exponencial",
         cantidad: 0,
         random_props: {
           semilla: 0,
-          valorK: 0,
-          valorG: 0,
-          valorC: 0,
+          media: 1,
           cantidad: 0,
         },
       },
     };
   },
-  props: ["isNumber", "coprimos"],
+  props: ["isNumber"],
 
   methods: {
     async randomDataProvider(ctx) {
       if (this.cantidad == "") return;
 
       const promise = clienteAxios.get(
-        `/api/randomLineal?semilla=${this.semilla}&k=${this.valorK}&g=${this.valorG}&c=${this.valorC}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}`
+        `/api/randomExponencial?pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}&seed=${this.semilla}&media=${this.media}`
       );
       // Must return a promise that resolves to an array of items
       return promise.then((data) => {
@@ -193,32 +159,18 @@ export default {
     },
     async onSubmit(event) {
       event.preventDefault();
-      // El valor de g debe estar entre 1 y 20 para generar hasta un millon de numeros
-      if (this.valorG <= 0) {
-        alert("El valor de la constante G debe estar entre 1 y 20!");
-        return;
-      }
-      if (this.valorK <= 0) {
-        alert("El valor de la constante multiplicativa debe ser positivo!");
-        return;
-      }
+
       if (this.cantidadGenerar > 1000000 || this.cantidadGenerar <= 0) {
         alert("La cantidad a generar debe estar entre 0 y 1000000!");
         return;
       }
-      // C y 2^g (modulo) deben ser coprimos
-      if (!this.coprimos(this.valorC, Math.pow(2, this.valorG))) {
-        alert("La constante C y el modulo (2^g) deben ser coprimos!");
-        return;
-      }
-      this.jiCuadradoProps = {
-        type: "linear",
+
+      this.histogramProps = {
+        type: "exponencial",
         cantidad: this.cantidadGenerar,
         random_props: {
           semilla: this.semilla,
-          valorG: this.valorG,
-          valorK: this.valorK,
-          valorC: this.valorC,
+          media: this.media,
         },
       };
       this.randomHash = new Date().getTime();
@@ -230,7 +182,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.linear {
+.exponencial {
   width: 100%;
   height: 100%;
   max-width: 800px;

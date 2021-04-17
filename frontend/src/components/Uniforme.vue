@@ -1,10 +1,10 @@
 <template>
-  <div class="multiplicative">
+  <div class="uniforme">
     <b-card
       class="bcard-index"
       title="Generador de Números Aleatorios"
       header="Simulación - UTN FRC"
-      sub-title="Método Multiplicativo"
+      sub-title="Método Uniforme"
     >
       <b-form>
         <b-form-row
@@ -26,44 +26,12 @@
           <b-col
             ><b-form-group
               id="input-group-2"
-              label="Constante Multiplicativa: "
-              label-for="input-2"
-            >
-              <b-form-input
-                id="input-2"
-                placeholder="Ingresar el valor de la constante no nula"
-                required
-                v-model="valorK"
-                @keypress="isNumber($event)"
-              ></b-form-input>
-            </b-form-group>
-          </b-col>
-        </b-form-row>
-        <b-form-row>
-          <b-col>
-            <b-form-group
-              id="input-group-2"
-              label="Valor G: "
-              label-for="input-2"
-            >
-              <b-form-input
-                id="input-2"
-                placeholder="Ingresar g"
-                required
-                v-model="valorG"
-                @keypress="isNumber($event)"
-              ></b-form-input>
-            </b-form-group>
-          </b-col>
-          <b-col>
-            <b-form-group
-              id="input-group-2"
               label="Cantidad a generar: "
               label-for="input-2"
             >
               <b-form-input
                 id="input-2"
-                placeholder="Ingresar cantidad"
+                placeholder=""
                 required
                 v-model="cantidadGenerar"
                 @keypress="isNumber($event)"
@@ -71,8 +39,39 @@
             </b-form-group>
           </b-col>
         </b-form-row>
+        <b-form-row
+          ><b-col>
+            <b-form-group
+              id="input-group-2"
+              label="Limite inferior: "
+              label-for="input-2"
+            >
+              <b-form-input
+                id="input-2"
+                placeholder=""
+                required
+                v-model="li"
+                @keypress="isNumber($event)"
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
+          <b-col
+            ><b-form-group
+              id="input-group-2"
+              label="Limite superior: "
+              label-for="input-2"
+            >
+              <b-form-input
+                id="input-2"
+                placeholder="Ingresar el valor de la constante no nula"
+                required
+                v-model="ls"
+                @keypress="isNumber($event)"
+              ></b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-form-row>
       </b-form>
-
       <b-button
         variant="primary"
         style="margin: 10px 43%"
@@ -90,8 +89,9 @@
         +
       </b-button>
       <div v-if="randomHash" :key="randomHash" class="table-container">
+        <p>Cantidad de numeros aleatorios: {{ this.cantidadFilas }}</p>
         <b-table
-          id="multiplicative-table"
+          id="uniforme-table"
           :per-page="pageSize"
           :current-page="pageNum"
           striped
@@ -100,7 +100,7 @@
         ></b-table>
         <p>
           Tabla N°1: Serie de numeros aleatorios generados por el metodo
-          multiplicativo
+          uniforme
         </p>
       </div>
       <div v-if="randomHash" class="pagination-container">
@@ -108,57 +108,57 @@
           v-model="pageNum"
           :total-rows="cantidadFilas"
           :per-page="pageSize"
-          aria-controls="multiplicative-table"
+          aria-controls="uniforme-table"
           align="center"
         ></b-pagination>
       </div>
     </b-card>
-    <ji-cuadrado
+    <Histogram
       style="margin-top: 10px"
       v-if="randomHash"
       :key="randomHash"
-      :jiCuadradoProps="jiCuadradoProps"
+      :histogramProps="histogramProps"
     >
-    </ji-cuadrado>
+    </Histogram>
   </div>
 </template>
 
 <script>
 import clienteAxios from "../config/axios";
-import JiCuadrado from "./JiCuadrado.vue";
+import Histogram from "./Histogram.vue";
 export default {
-  components: { JiCuadrado },
-  name: "Multiplicative",
+  components: { Histogram },
+  name: "Uniforme",
   data() {
     return {
       semilla: 0,
-      valorK: 0,
-      valorG: 0,
-      valorC: 0,
       pageNum: 0,
       pageSize: 5,
-      randomHash: null,
       cantidadGenerar: 20,
+      li: 0,
+      ls: 0,
+      randomHash: null,
       cantidadFilas: 0,
-      jiCuadradoProps: {
-        type: "multiplicative",
+      histogramProps: {
+        type: "uniforme",
         cantidad: 0,
-        random_props: { semilla: 0, valorK: 0, valorG: 0, valorC: 0 },
+        random_props: {
+          semilla: 0,
+          li: 0,
+          ls: 0,
+          cantidad: 0,
+        },
       },
     };
   },
-  props: ["isNumber", "coprimos"],
+  props: ["isNumber"],
 
   methods: {
-    async unoMas() {
-      this.cantidadGenerar++;
-      this.onSubmit({ preventDefault: () => {} });
-    },
     async randomDataProvider(ctx) {
       if (this.cantidad == "") return;
 
       const promise = clienteAxios.get(
-        `/api/randomLineal?semilla=${this.semilla}&k=${this.valorK}&g=${this.valorG}&c=${this.valorC}&pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}`
+        `/api/randomUniforme?pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}&seed=${this.semilla}&li=${this.li}&ls=${this.ls}`
       );
       // Must return a promise that resolves to an array of items
       return promise.then((data) => {
@@ -170,35 +170,25 @@ export default {
         return items;
       });
     },
+    async unoMas() {
+      this.cantidadGenerar++;
+      this.onSubmit({ preventDefault: () => {} });
+    },
     async onSubmit(event) {
       event.preventDefault();
-      // El valor de g debe estar entre 1 y 20 para generar hasta un millon de numeros
-      if (this.valorG <= 0) {
-        alert("El valor de la constante G debe estar entre 1 y 20!");
-        return;
-      }
-      if (this.valorK <= 0) {
-        alert("El valor de la constante multiplicativa debe ser positivo!");
-        return;
-      }
-      // C y 2^g (modulo) deben ser coprimos
-      if (this.semilla % 2 == 0) {
-        alert("La semilla debe ser impar!");
-        return;
-      }
+
       if (this.cantidadGenerar > 1000000 || this.cantidadGenerar <= 0) {
         alert("La cantidad a generar debe estar entre 0 y 1000000!");
         return;
       }
 
-      this.jiCuadradoProps = {
-        type: "multiplicative",
+      this.histogramProps = {
+        type: "uniforme",
         cantidad: this.cantidadGenerar,
         random_props: {
           semilla: this.semilla,
-          valorG: this.valorG,
-          valorK: this.valorK,
-          valorC: 0,
+          li: this.li,
+          ls: this.ls,
         },
       };
       this.randomHash = new Date().getTime();
@@ -210,7 +200,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.multiplicative {
+.uniforme {
   width: 100%;
   height: 100%;
   max-width: 800px;

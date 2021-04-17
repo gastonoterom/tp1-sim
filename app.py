@@ -3,12 +3,12 @@ from flask_cors import CORS
 from flask_caching import Cache
 import flask_excel as excel
 
-app = Flask(__name__, template_folder='frontend/dist')
+app = Flask(__name__)
 
 config = {
     "DEBUG": True,          # some Flask specific configs
     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
-    "CACHE_DEFAULT_TIMEOUT": 300
+    "CACHE_DEFAULT_TIMEOUT": 9999999
 }
 
 # tell Flask to use the above defined config
@@ -18,5 +18,4 @@ excel.init_excel(app)
 CORS(app)
 
 
-import frontend
-from routes import linearRoute, jiRoute, multiplicativeRoute, randomRoute
+from routes import uniformeRoute, exponencialRoute, normalRoute, histogramRoute

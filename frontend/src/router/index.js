@@ -1,10 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Index from "../components/Index";
-import Random from "../components/Random";
-import Linear from "../components/Linear";
-import Multiplicative from "../components/Multiplicative";
-import JiCuadrado from "../components/JiCuadrado";
+
+import Uniforme from "../components/Uniforme";
+import Exponencial from "../components/Exponencial";
+import Normal from "../components/Normal";
 
 Vue.use(VueRouter);
 
@@ -15,24 +15,19 @@ const routes = [
     component: Index,
   },
   {
-    path: "/random",
-    name: "Random Generator",
-    component: Random,
+    path: "/random-uniforme",
+    name: "Generador Uniforme",
+    component: Uniforme,
   },
   {
-    path: "/linear",
-    name: "Linear",
-    component: Linear,
+    path: "/random-exponencial",
+    name: "Generador Exponencial",
+    component: Exponencial,
   },
   {
-    path: "/multiplicative",
-    name: "Multiplicative",
-    component: Multiplicative,
-  },
-  {
-    path: "/jicuadrado",
-    name: "JiCuadrado",
-    component: JiCuadrado,
+    path: "/random-normal",
+    name: "Generador Normal",
+    component: Normal,
   },
 ];
 

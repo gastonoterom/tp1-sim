@@ -1,0 +1,25 @@
+Para Uniforme [A,B]:
+X = A + RND(B -  A) RND --> generador unif. [0,1]
+Parametros necesarios: solo A y B
+
+Para Exp Negativa
+X = -1/L. ln(1-RND) Donde L(lambda) = 1/mu 
+L rep ;a frec con q ocurre el evento bajo analisis no es lo mismo q la media.
+Parametros: mu. 
+
+
+Distribucion normla hay dos metodos elegir con cual hacerlo.
+Box-Muller
+distribucion normal estandar(mu=0, s=1) (s=sigma)
+Req un par de nuevos num aleat unif como entrada para generar la dist.
+N1 = [raiz(-2.ln(RND1)) . cos(2pi.RND2)]* s+mu
+N2 = [raiz(-2.ln(RND1)) . sen(2pi.RND2)]* s+mu
+
+Primer con un generador unif [0,1 obtiene RND1 y RND2] 
+este metodo genera un PAR de numeros, cada dos num de la dist unif genera otros dos con
+dist normal 
+
+Metodo Convolucion
+Zi = (Sumatoria(RNDi - 6) *s  + mu
+este metodo obtiene 12 numeros aleat unif. Se los debe sumar. al result restar 6
+
