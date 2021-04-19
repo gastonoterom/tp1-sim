@@ -189,7 +189,6 @@ export default {
 }
 
 .table-container {
-  max-height: 40vh !important;
   overflow: auto;
   margin-top: 10px;
 }

@@ -14,23 +14,33 @@
         Figura N°1: Histograma de numeros aleatorios obtenidos dentro de
         intervalos
       </p>
+      <Frequencies
+        v-if="randomHash"
+        :key="randomHash"
+        :frequencyProps="frequencyProps"
+      >
+      </Frequencies>
     </b-card>
   </div>
 </template>
 <script>
 import clienteAxios from "../config/axios";
-
+import Frequencies from "./Frequencies";
 export default {
+  components: { Frequencies },
+
   data() {
     return {
       downloadLink: null,
       pageNum: 0,
       pageSize: 5,
       subtitle: "",
+      randomHash: false,
       histogramSrc: "",
       rows: [],
       intervalos: 10,
       intervalos_select: [10, 15, 20],
+      frequencyProps: {},
     };
   },
   props: ["histogramProps"],
@@ -51,7 +61,6 @@ export default {
           break;
         case "exponencial":
           media = this.histogramProps.random_props.media;
-
           this.histogramSrc = `${clienteAxios.defaults.baseURL}/api/histogram/${tipo}?cantidad_muestra=${cantidad}&seed=${seed}&intervalos=${intervalos}&media=${media}`;
 
           break;
@@ -66,7 +75,17 @@ export default {
     },
     intervalosChanged() {
       this.generateHistogramSrc();
-      this.getRows();
+      this.frequencyProps = {
+        randomType: this.histogramProps.type,
+        li: this.histogramProps.random_props.li,
+        ls: this.histogramProps.random_props.ls,
+        sigma: this.histogramProps.random_props.sigma,
+        media: this.histogramProps.random_props.media,
+        seed: this.histogramProps.random_props.semilla,
+        intervalos: this.intervalos,
+        cantidad: this.histogramProps.cantidad,
+      };
+      this.randomHash = new Date().getTime();
     },
   },
   mounted() {
@@ -85,6 +104,17 @@ export default {
     }
     this.subtitle = `A partir de valores generados por el método ${tipo}`;
     this.generateHistogramSrc();
+    this.frequencyProps = {
+      randomType: this.histogramProps.type,
+      li: this.histogramProps.random_props.li,
+      ls: this.histogramProps.random_props.ls,
+      sigma: this.histogramProps.random_props.sigma,
+      media: this.histogramProps.random_props.media,
+      seed: this.histogramProps.random_props.semilla,
+      intervalos: this.intervalos,
+      cantidad: this.histogramProps.cantidad,
+    };
+    this.randomHash = new Date().getTime();
   },
 };
 </script>

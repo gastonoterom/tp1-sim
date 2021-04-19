@@ -2,7 +2,7 @@
   <div class="index">
     <b-card
       class="bcard-index"
-      title="Trabajo Practico N° 1"
+      title="Trabajo Practico N° 3"
       header="Simulación - UTN FRC"
       sub-title="Integrantes"
     >

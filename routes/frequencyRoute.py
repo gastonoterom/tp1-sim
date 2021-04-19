@@ -6,12 +6,6 @@ import json
 import time
 import math
 
-# histogram
-import base64
-from io import BytesIO
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from app import excel
 
 # random methods
 from methods.randomUniforme import random_uniforme
@@ -22,38 +16,8 @@ from methods.randomNormal import random_normal
 from methods.frequency import random_exponencial_frequency, random_uniforme_frequency, random_normal_frequency
 
 
-@cache.memoize()
-def generateHistogram(bins, random_array):
-    # Generate the figure **without using pyplot**.
-    fig = Figure()
-    ax = fig.subplots()
-
-    values, bin_bounds, bars = ax.hist(
-        random_array, bins=bins)
-
-    ax.set_title("Histograma de Frecuencias Obtenidas en Numeros Aleatorios")
-
-    ax.set_xticks(bins)
-
-    ax.tick_params(axis='x', labelrotation=45)
-
-    ax.set_xlabel("Numeros aleatorios")
-    ax.set_ylabel("Frecuencias observadas")
-    # ---------------------------------------------
-
-    # Save it to a temporary buffer.
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    return buf
-
-
-@app.route('/api/histogram/<randomMethod>/')
-def histogramGenerator(randomMethod):
-
-    # Start time counter
-    start = time.time()
-
-    # -------------------
+@app.route('/api/frequency/<randomMethod>/')
+def frequencyTable(randomMethod):
 
     # Get params
 
@@ -83,7 +47,6 @@ def histogramGenerator(randomMethod):
         random_array = random_uniforme(cantidad_muestra, seed, li, ls)
         freq, bins = random_uniforme_frequency(
             random_array, intervalos)
-
     # # -----------------
 
     # # Exponential method
@@ -118,19 +81,9 @@ def histogramGenerator(randomMethod):
 
     # # -----------------
 
+    freq_parsed = [{'Intervalo': (i + 1), 'Frecuencia obtenida': x, 'Limite inferior': bins[i], 'Limite superior': bins[i + 1]}
+                   for i, x in enumerate(freq.tolist())]
+
     # -------------------
-    # Generate the histogram
 
-    buf = generateHistogram(bins, random_array)
-
-    # -----------------------------
-
-    # End the counter
-
-    end = time.time()
-
-    print("Histogram generator time:", end - start)
-
-    # ---------------
-
-    return Response(buf.getvalue(), mimetype='image/png')
+    return Response(json.dumps(freq_parsed), mimetype='application/json')

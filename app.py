@@ -18,4 +18,4 @@ excel.init_excel(app)
 CORS(app)
 
 
-from routes import uniformeRoute, exponencialRoute, normalRoute, histogramRoute
+from routes import uniformeRoute, exponencialRoute, normalRoute, histogramRoute, frequencyRoute

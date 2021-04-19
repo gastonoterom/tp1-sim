@@ -1,27 +1,35 @@
 import random
 from math import trunc
 from app import cache
-
+import numpy as np
+from numba import njit
 # TP3: Genera una distribucion random uniforme
 
 
 @cache.memoize()
 def random_uniforme(cantidad_muestra, seed, li, ls):
 
-    # Array donde se van a guardar y enviar los numeros randoms
-    random_array = []
-    random_array_raw = []
-    # Cantidad de cifras decimales donde va a ser truncado cada numero aleatorio
-    cifras_decimales = 4
-    random.seed(seed)
-    for i in range(cantidad_muestra):
+    np.random.seed(seed)
+    py_random_array = np.random.rand(cantidad_muestra)
 
-        random_num = li + random.random() * (ls - li)
-        random_array_raw.append(trunc(random_num * 10 ** cifras_decimales) /
-                                10**cifras_decimales)
-        random_array.append({
-            'num': trunc(random_num * 10 ** cifras_decimales) /
-            10**cifras_decimales
-        })
+    return random_uniforme_numba(py_random_array, li, ls)
 
-    return random_array, random_array_raw
+
+@njit
+def random_uniforme_numba(py_random_array, li, ls):
+
+    py_random_array_size = len(py_random_array)
+
+    output_array = np.zeros(py_random_array_size)
+
+    decimals = 4
+
+    for ii in range(py_random_array_size):
+
+        random_num = li + py_random_array[ii] * (ls - li)
+
+        random_num_trunc = trunc(random_num * 10 ** decimals) / 10**decimals
+
+        output_array[ii] = random_num_trunc
+
+    return output_array

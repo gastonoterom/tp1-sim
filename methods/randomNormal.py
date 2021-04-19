@@ -6,31 +6,32 @@ from math import cos
 from math import sin
 import math
 from app import cache
-
-# TP3: Genera una distribucion random uniforme
-
-
-def random_norma_estandar(cantidad_muestra, seed):
-    return random_normal(cantidad_muestra, seed, mu=0, sigma=1)
+import numpy as np
+from numba import njit
+# TP3: Genera una distribucion random normal
 
 
 @cache.memoize()
-def random_normal(cantidad_muestra, seed, mu=0, sigma=1):
+def random_normal(cantidad_muestra, seed, mu, sigma):
 
-    # Array donde se van a guardar y enviar los numeros randoms
-    random_array = []
-    random_array_raw = []
+    np.random.seed(seed)
+    py_random_array = np.random.rand(cantidad_muestra + 1)
 
-    # Cantidad de cifras decimales donde va a ser truncado cada numero aleatorio
-    cifras_decimales = 4
+    return random_normal_numba(py_random_array, cantidad_muestra, mu, sigma)
 
-    random.seed(seed)
 
-    for i in range(cantidad_muestra):
+@njit
+def random_normal_numba(py_random_array, size, mu, sigma):
 
-        if (i % 2 == 0):
-            random1 = random.random()
-            random2 = random.random()
+    output_array = np.zeros(size)
+
+    decimals = 4
+
+    for ii in range(size):
+
+        if (ii % 2 == 0):
+            random1 = py_random_array[ii]
+            random2 = py_random_array[ii + 1]
 
             random_num = (sqrt(-2 * log(random1)) *
                           cos(2 * math.pi * random2)) * sigma + mu
@@ -38,10 +39,8 @@ def random_normal(cantidad_muestra, seed, mu=0, sigma=1):
             random_num = (sqrt(-2 * log(random1)) *
                           sin(2 * math.pi * random2)) * sigma + mu
 
-        random_array_raw.append(
-            trunc(random_num * 10 ** cifras_decimales) / 10**cifras_decimales)
-        random_array.append({
-            'num': trunc(random_num * 10 ** cifras_decimales) / 10**cifras_decimales
-        })
+        random_num_trunc = trunc(random_num * 10 ** decimals) / 10**decimals
 
-    return random_array, random_array_raw
+        output_array[ii] = random_num_trunc
+
+    return output_array

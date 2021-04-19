@@ -2,32 +2,37 @@ import random
 from math import trunc
 from math import log
 from app import cache
+import numpy as np
+from numba import njit
 
 # TP3: Genera una distribucion random uniforme
 
 
 @cache.memoize()
-def random_exponencial(cantidad_muestra, seed, media):
+def random_exponencial(cantidad_muestra, seed, mu):
 
-    # Array donde se van a guardar y enviar los numeros randoms
-    random_array = []
-    random_array_raw = []
+    np.random.seed(seed)
+    py_random_array = np.random.rand(cantidad_muestra)
 
-    # Cantidad de cifras decimales donde va a ser truncado cada numero aleatorio
-    cifras_decimales = 4
+    return random_exp_numba(py_random_array, mu)
 
-    # Usar lambda directamente si no hay media
-    var_lambda = 1 / media
 
-    random.seed(seed)
-    for i in range(cantidad_muestra):
+@njit
+def random_exp_numba(py_random_array, mean):
 
-        random_num = -1 / var_lambda * log((1 - random.random()))
-        random_array_raw.append(trunc(random_num * 10 ** cifras_decimales) /
-                                10**cifras_decimales)
-        random_array.append({
-            'num': trunc(random_num * 10 ** cifras_decimales) /
-            10**cifras_decimales
-        })
+    size = len(py_random_array)
 
-    return random_array, random_array_raw
+    output_array = np.zeros(size)
+
+    decimals = 4
+
+    var_lambda = 1 / mean
+
+    for ii in range(size):
+
+        random_num = -1 / var_lambda * log((1 - py_random_array[ii]))
+        random_num_trunc = trunc(random_num * 10 ** decimals) / 10**decimals
+
+        output_array[ii] = random_num_trunc
+
+    return output_array
