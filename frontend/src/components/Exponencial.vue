@@ -118,7 +118,7 @@ export default {
       pageNum: 1,
       pageSize: 5,
       cantidadGenerar: 20,
-      semilla: 0,
+      semilla: Date.now()%100000,
       seed: 0,
       media: 1,
       randomHash: false,
@@ -127,7 +127,7 @@ export default {
         type: "exponencial",
         cantidad: 0,
         random_props: {
-          semilla: 0,
+          semilla: Date.now()%100000,
           media: 1,
           cantidad: 0,
         },
@@ -141,7 +141,7 @@ export default {
       if (this.cantidad == "") return;
 
       const promise = clienteAxios.get(
-        `/api/randomExponencial?pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}&seed=${this.semilla}&media=${this.media}`
+        `/api/randomExponencial?pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}&seed=${this.semilla}&media=${parseFloat(this.media)}`
       );
       // Must return a promise that resolves to an array of items
       return promise.then((data) => {
@@ -165,12 +165,22 @@ export default {
         return;
       }
 
+      if (!Number.isFinite(parseFloat(this.media))) {
+        alert("La media debe ser un numero!");
+        return;
+      }
+
+      if (this.semilla > 4294967295) {
+        alert("La semilla debe ser menor a 4294967296!");
+        return;
+      }
+
       this.histogramProps = {
         type: "exponencial",
         cantidad: this.cantidadGenerar,
         random_props: {
           semilla: this.semilla,
-          media: this.media,
+          media: parseFloat(this.media),
         },
       };
       this.randomHash = new Date().getTime();

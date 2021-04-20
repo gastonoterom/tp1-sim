@@ -51,7 +51,6 @@
                 placeholder=""
                 required
                 v-model="media"
-                @keypress="isNumber($event)"
               ></b-form-input>
             </b-form-group>
           </b-col>
@@ -66,7 +65,6 @@
                 placeholder=""
                 required
                 v-model="sigma"
-                @keypress="isNumber($event)"
               ></b-form-input>
             </b-form-group>
           </b-col>
@@ -133,7 +131,7 @@ export default {
       pageNum: 1,
       pageSize: 5,
       cantidadGenerar: 20,
-      semilla: 0,
+      semilla: Date.now()%100000,
       seed: 0,
       media: 0,
       sigma: 1,
@@ -143,7 +141,7 @@ export default {
         type: "normal",
         cantidad: 0,
         random_props: {
-          semilla: 0,
+          semilla: Date.now()%100000,
           media: 1,
           cantidad: 0,
           sigma: 0,
@@ -158,7 +156,7 @@ export default {
       if (this.cantidad == "") return;
 
       const promise = clienteAxios.get(
-        `/api/randomNormal?pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}&seed=${this.semilla}&mu=${this.media}&sigma=${this.sigma}`
+        `/api/randomNormal?pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}&seed=${this.semilla}&mu=${parseFloat(this.media)}&sigma=${parseFloat(this.sigma)}`
       );
       // Must return a promise that resolves to an array of items
       return promise.then((data) => {
@@ -182,13 +180,27 @@ export default {
         return;
       }
 
+      if (this.semilla > 4294967295) {
+        alert("La semilla debe ser menor a 4294967296!");
+        return;
+      }
+
+      if (!Number.isFinite(parseFloat(this.media))) {
+        alert("La media debe ser un numero!");
+        return;
+      }
+
+      if (!Number.isFinite(parseFloat(this.sigma))) {
+        alert("Sigma debe ser un numero!");
+        return;
+      }
       this.histogramProps = {
         type: "normal",
         cantidad: this.cantidadGenerar,
         random_props: {
           semilla: this.semilla,
-          media: this.media,
-          sigma: this.sigma,
+          media: parseFloat(this.media),
+          sigma: parseFloat(this.sigma),
         },
       };
       this.randomHash = new Date().getTime();

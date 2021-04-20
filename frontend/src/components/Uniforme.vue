@@ -51,7 +51,6 @@
                 placeholder=""
                 required
                 v-model="li"
-                @keypress="isNumber($event)"
               ></b-form-input>
             </b-form-group>
           </b-col>
@@ -63,10 +62,9 @@
             >
               <b-form-input
                 id="input-2"
-                placeholder="Ingresar el valor de la constante no nula"
+                placeholder=""
                 required
                 v-model="ls"
-                @keypress="isNumber($event)"
               ></b-form-input>
             </b-form-group>
           </b-col>
@@ -131,21 +129,21 @@ export default {
   name: "Uniforme",
   data() {
     return {
-      semilla: 0,
+      semilla: Date.now() % 100000,
       pageNum: 0,
       pageSize: 5,
       cantidadGenerar: 20,
       li: 0,
-      ls: 0,
+      ls: 1,
       randomHash: null,
       cantidadFilas: 0,
       histogramProps: {
         type: "uniforme",
         cantidad: 0,
         random_props: {
-          semilla: 0,
+          semilla: Date.now() % 100000,
           li: 0,
-          ls: 0,
+          ls: 1,
           cantidad: 0,
         },
       },
@@ -158,7 +156,7 @@ export default {
       if (this.cantidad == "") return;
 
       const promise = clienteAxios.get(
-        `/api/randomUniforme?pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}&seed=${this.semilla}&li=${this.li}&ls=${this.ls}`
+        `/api/randomUniforme?pagina=${ctx.currentPage}&pageSize=${this.pageSize}&cantidad_muestra=${this.cantidadGenerar}&seed=${this.semilla}&li=${parseFloat(this.li)}&ls=${parseFloat(this.ls)}`
       );
       // Must return a promise that resolves to an array of items
       return promise.then((data) => {
@@ -182,15 +180,36 @@ export default {
         return;
       }
 
+      if (this.semilla > 4294967295) {
+        alert("La semilla debe ser menor a 4294967296!");
+        return;
+      }
+
+      if (this.li >= this.ls) {
+        alert("El limite inferior debe ser menor al limite superior!");
+        return;
+      }
+
+      if (!Number.isFinite(parseFloat(this.li))) {
+        alert("El limite inferior debe ser un numero!");
+        return;
+      }
+
+      if (!Number.isFinite(parseFloat(this.ls))) {
+        alert("El limite superior debe ser un numero!");
+        return;
+      }
+      
       this.histogramProps = {
         type: "uniforme",
         cantidad: this.cantidadGenerar,
         random_props: {
           semilla: this.semilla,
-          li: this.li,
-          ls: this.ls,
+          li: parseFloat(this.li),
+          ls: parseFloat(this.ls),
         },
       };
+
       this.randomHash = new Date().getTime();
       this.cantidadFilas = this.cantidadGenerar;
     },
