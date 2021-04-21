@@ -17,10 +17,10 @@ def uniformeRandom():
     try:
         cantidad_muestra = int(request.args.get("cantidad_muestra"))
         seed = int(request.args.get("seed"))
-        li = int(request.args.get("li"))
-        ls = int(request.args.get("ls"))
+        li = float(request.args.get("li"))
+        ls = float(request.args.get("ls"))
     except Exception:
-        return Response("Error: missing query parameters or not int")
+        return Response("Error: missing query parameters or not int/float")
 
     try:
         pagina = int(request.args.get("pagina"))
