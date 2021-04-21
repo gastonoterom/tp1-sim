@@ -36,10 +36,10 @@ def frequencyTable(randomMethod):
     if (randomMethod == "uniforme"):
 
         try:
-            li = int(request.args.get("li"))
-            ls = int(request.args.get("ls"))
+            li = float(request.args.get("li"))
+            ls = float(request.args.get("ls"))
         except Exception:
-            return Response("Error: missing query parameters or not int")
+            return Response("Error: missing query parameters or not int/float")
 
         if(cantidad_muestra > 1000000):
             return Response("La cantidad de la muestra no puede ser mayor a un millon")
