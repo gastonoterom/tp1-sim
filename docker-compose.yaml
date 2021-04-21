@@ -1,17 +1,7 @@
-version: "3.9"
+version: '3'
 services:
-  web:
-    container_name: tp1-sim
-    build: .
+  api:
+    image: "tp1-sim_api"
     ports:
       - "5000:5000"
-    volumes:
-      - .:/code
-    environment:
-      FLASK_ENV: development
-
-networks:
-  default:
-    external:
-            name: tp1-sim
 
